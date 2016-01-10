@@ -3,6 +3,9 @@
 
 
     <h1>Hasnest S7 miner statistics</h1>
+    <center>
+    S7 is the newest bitcoin miner released by Bitmain. It has less than half the electricity of their privious miners at only 0.249w/GHS.<br> You can buy it on Hashnet where the maintenance fee of this miner is $0.0005796/GHS/Day. You can also buy this miner at Bitmain.com and run it at home.
+    <center>
     <p>
 	<h2>S7 BTC</h2>
       <%= area_chart Dataset.where("s7_btc > ?", 0.0).group_by_day( :created_at, "avg", "s7_btc") %>

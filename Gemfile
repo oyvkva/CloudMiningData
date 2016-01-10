@@ -17,6 +17,7 @@ gem 'dateslices'
 gem 'roo'
 gem 'haml', '~> 4.0'
 gem 'sitemap_generator'
+gem 'meta-tags'
 
 group :development, :test do
   gem 'sqlite3',     '1.3.9'

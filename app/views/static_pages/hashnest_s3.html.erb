@@ -9,6 +9,13 @@
 
     <h1>Hasnest S3 miner statistics</h1>
     <p>
+
+    <center>
+    S3 was realeased early 2014 by Bitmain and has electricity use of 0.8w/GHS. You can buy it on Hashnet where the maintenance fee of this miner is $0.00192/GHS/Day.<br> You can find current statistics for this miner below, data is updated every hour.
+    <center>
+
+
+
 	     <h2>S3 BTC</h2>
       <%= area_chart Dataset.where("s3_btc > ?", 0.0).group_by_day( :created_at, "avg", "s3_btc") %>
       <h2>S3 USD</h2>

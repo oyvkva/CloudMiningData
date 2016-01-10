@@ -1,9 +1,9 @@
-<% provide(:title, "Miners profitability modeling") %>
+<% provide(:title, "Bitcoin Miners profitability modeling") %>
 <%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
-    <h1>Miners profitability modeling</h1>
+    <h1>Hashnest Bitcoin Miners profitability modeling</h1>
     <p>
     <center>
-
+    The calculations here assume the block reward will halve at 2016-07-18, this may differ by a few days but should not affect the calculation much.<br> What happens with difficulty after halving is very hard to say, so the model is most likely very inaccurate after this date.<br> Put in the difficulty change and price change of bitcoin you think will happen in the coming year and run the model.
        <% if !is_number?( @diffChange )
         @diffChange = 2
       else 
@@ -16,13 +16,13 @@
       @priceChange = 0 
       else 
         if ( Float(@priceChange) < - 100 || Float(@priceChange) > 1000000)
-          @priceChange = 0
+          @priceChange = 25
         end
       end
     
       %>
 
-      
+      <br><br>
     <%= form_tag "miners" do %>
     Percent difficulty change: (every 14 days) <%= text_field_tag "percentDiffChange", @diffChange %>% &nbsp;&nbsp;&nbsp;&nbsp;   
     Percent price change next 365 days: <%= text_field_tag "percentPriceChange", @priceChange %>%    &nbsp;&nbsp;&nbsp;&nbsp;
@@ -90,23 +90,34 @@
 
         btc_price = btc_price * (1 + percentPriceChange)
 
-        %>
 
-
-        <%
         newProfit = (502914.19/difficulty*btc_price-0.0005796)/btc_price/minerPrice
+        newProfitS5 = (502914.19/difficulty*btc_price-0.001175)/btc_price/minerPriceS5
+        newProfitS4 = (502914.19/difficulty*btc_price-0.001625)/btc_price/minerPriceS4
+        newProfitS3 = (502914.19/difficulty*btc_price-0.00192)/btc_price/minerPriceS3
+
+        if (daysFromNow.days.from_now.beginning_of_day > "UTC 2016-07-18 00:00:00")
+          newProfit = (502914.19/difficulty*btc_price/2.0-0.0005796)/btc_price/minerPrice
+          newProfitS5 = (502914.19/difficulty*btc_price/2.0-0.001175)/btc_price/minerPriceS5
+          newProfitS4 = (502914.19/difficulty*btc_price/2.0-0.001625)/btc_price/minerPriceS4
+          newProfitS3 = (502914.19/difficulty*btc_price/2.0-0.00192)/btc_price/minerPriceS3
+        end
+
+    
+
+        
         newCommulative = datamodel[i-1][:commulative] + newProfit
         newDay = { date: daysFromNow.days.from_now.beginning_of_day, difficulty: difficulty, btc_price: btc_price, profit: newProfit, commulative: newCommulative }
 
-        newProfitS5 = (502914.19/difficulty*btc_price-0.001175)/btc_price/minerPriceS5
+        
         newCommulativeS5 = datamodelS5[i-1][:commulative] + newProfitS5
         newDayS5 = { date: daysFromNow.days.from_now.beginning_of_day, difficulty: difficulty, btc_price: btc_price, profit: newProfitS5, commulative: newCommulativeS5 }
 
-        newProfitS4 = (502914.19/difficulty*btc_price-0.001625)/btc_price/minerPriceS4
+        
         newCommulativeS4 = datamodelS4[i-1][:commulative] + newProfitS4
         newDayS4 = { date: daysFromNow.days.from_now.beginning_of_day, difficulty: difficulty, btc_price: btc_price, profit: newProfitS4, commulative: newCommulativeS4 }
 
-          newProfitS3 = (502914.19/difficulty*btc_price-0.00192)/btc_price/minerPriceS3
+          
         newCommulativeS3 = datamodelS3[i-1][:commulative] + newProfitS3
         newDayS3 = { date: daysFromNow.days.from_now.beginning_of_day, difficulty: difficulty, btc_price: btc_price, profit: newProfitS3, commulative: newCommulativeS3 }
 
@@ -172,7 +183,14 @@
 
 
 
-      <%= line_chart coolData, library: {curveType: "none", pointSize: 0, lineWidth: 3, height: 600} %>
+      <%= line_chart coolData, library: {curveType: "none", pointSize: 0, lineWidth: 3, height: 600,vAxis: { 
+              title: "Mining return", 
+              viewWindowMode:'explicit',
+              viewWindow:{
+                max:1.6,
+                min:0.0
+              }
+            }} %>
 
       <br>
       <br>
